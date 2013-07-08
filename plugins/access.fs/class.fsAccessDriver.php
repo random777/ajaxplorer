@@ -484,7 +484,7 @@ class fsAccessDriver extends AbstractAccessDriver implements AjxpWrapperProvider
 				$dirname = substr($dirname, 0, ConfService::getCoreConf("NODENAME_MAX_LENGTH"));
 				$this->filterUserSelectionToHidden(array($dirname));
                 AJXP_Controller::applyHook("node.before_create", array(new AJXP_Node($dir."/".$dirname), -2));
-				$error = $this->mkDir($dir, $dirname);
+				$error = $this->mkDir($dir, $dirname, isSet($httpVars["ignore_exists"])?true:false);
 				if(isSet($error)){
 					throw new AJXP_Exception($error);
 				}
@@ -568,7 +568,7 @@ class fsAccessDriver extends AbstractAccessDriver implements AjxpWrapperProvider
 					$errorMessage = "$mess[38] ".SystemTextEncoding::toUTF8($dir)." $mess[99].";
 					AJXP_Logger::debug("Upload error 412", array("destination"=>$destination));
 					return array("ERROR" => array("CODE" => $errorCode, "MESSAGE" => $errorMessage));
-				}	
+				}
 				foreach ($fileVars as $boxName => $boxData)
 				{
 					if(substr($boxName, 0, 9) != "userfile_") continue;
@@ -581,7 +581,7 @@ class fsAccessDriver extends AbstractAccessDriver implements AjxpWrapperProvider
 					}
 					$userfile_name = $boxData["name"];
 					try{
-						$this->filterUserSelectionToHidden(array($userfile_name));					
+						$this->filterUserSelectionToHidden(array($userfile_name));
 					}catch (Exception $e){
 						return array("ERROR" => array("CODE" => 411, "MESSAGE" => "Forbidden"));
 					}
@@ -658,20 +658,20 @@ class fsAccessDriver extends AbstractAccessDriver implements AjxpWrapperProvider
 
 					$this->changeMode($destination."/".$userfile_name);
                     $createdNode = new AJXP_Node($destination."/".$userfile_name);
-                    AJXP_Controller::applyHook("node.change", array(null, $createdNode, false));
+                    //AJXP_Controller::applyHook("node.change", array(null, $createdNode, false));
 					$logMessage.="$mess[34] ".SystemTextEncoding::toUTF8($userfile_name)." $mess[35] $dir";
 					AJXP_Logger::logAction("Upload File", array("file"=>SystemTextEncoding::fromUTF8($dir)."/".$userfile_name));
 				}
-				
+
 				if(isSet($errorMessage)){
 					AJXP_Logger::debug("Return error $errorCode $errorMessage");
-					return array("ERROR" => array("CODE" => $errorCode, "MESSAGE" => $errorMessage));
+                    return array("ERROR" => array("CODE" => $errorCode, "MESSAGE" => $errorMessage));
 				}else{
 					AJXP_Logger::debug("Return success");
 					return array("SUCCESS" => true, "CREATED_NODE" => $createdNode);
 				}
 				return ;
-				
+
 			break;
 
             case "lsync" :
@@ -1422,7 +1422,7 @@ class fsAccessDriver extends AbstractAccessDriver implements AjxpWrapperProvider
 		return $name."-$i".$ext;
 	}
 	
-	function mkDir($crtDir, $newDirName)
+	function mkDir($crtDir, $newDirName, $ignoreExists = false)
 	{
         $currentNodeDir = new AJXP_Node($this->urlBase.$crtDir);
         AJXP_Controller::applyHook("node.before_change", array(&$currentNodeDir));
@@ -1434,6 +1434,7 @@ class fsAccessDriver extends AbstractAccessDriver implements AjxpWrapperProvider
 		}
 		if(file_exists($this->urlBase."$crtDir/$newDirName"))
 		{
+            if($ignoreExists) return null;
 			return "$mess[40]"; 
 		}
 		if(!$this->isWriteable($this->urlBase."$crtDir"))

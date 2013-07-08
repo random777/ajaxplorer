@@ -406,10 +406,17 @@ class AJXP_XMLWriter
      * @static
      * @param $allBookmarks
      * @param bool $print
+     * @param string $format legacy|node_list
      * @return string
      */
-	static function writeBookmarks($allBookmarks, $print = true)
+	static function writeBookmarks($allBookmarks, $print = true, $format = "legacy")
 	{
+        if($format == "node_list") {
+            $driver = ConfService::loadRepositoryDriver();
+            if(!is_a($driver, "AjxpWrapperProvider")){
+                $driver = false;
+            }
+        }
 		$buffer = "";
 		foreach ($allBookmarks as $bookmark)
 		{
@@ -421,7 +428,16 @@ class AJXP_XMLWriter
 				$path = $bookmark;
 				$title = basename($bookmark);
 			}
-			$buffer .= "<bookmark path=\"".AJXP_Utils::xmlEntities($path)."\" title=\"".AJXP_Utils::xmlEntities($title)."\"/>";
+            if($format == "node_list"){
+                if($driver){
+                    $node = new AJXP_Node($driver->getResourceUrl($path));
+                    $buffer .= AJXP_XMLWriter::renderAjxpNode($node, true, false);
+                }else{
+                    $buffer .= AJXP_XMLWriter::renderNode($path, $title, false, array('icon' => "mime_empty.png"), true, false);
+                }
+            }else{
+                $buffer .= "<bookmark path=\"".AJXP_Utils::xmlEntities($path)."\" title=\"".AJXP_Utils::xmlEntities($title)."\"/>";
+            }
 		}
 		if($print) print $buffer;
 		else return $buffer;
@@ -576,7 +592,7 @@ class AJXP_XMLWriter
             $descTag = "";
             $description = $repoObject->getDescription();
             if(!empty($description)){
-                $descTag = '<description>'.$description.'</description>';
+                $descTag = '<description>'.AJXP_Utils::xmlEntities($description, true).'</description>';
             }
             $xmlString = "<repo access_type=\"".$repoObject->accessType."\" id=\"".$repoId."\"$rightString $streamString $slugString $isSharedString><label>".SystemTextEncoding::toUTF8(AJXP_Utils::xmlEntities($repoObject->getDisplay()))."</label>".$descTag.$repoObject->getClientSettings()."</repo>";
             if($toLast){

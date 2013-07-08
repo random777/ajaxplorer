@@ -109,7 +109,7 @@
 			window.ajxpBootstrap = new AjxpBootstrap(startParameters);
             window.ajxpMinisite = true;
             window.onunload = function(){
-                if(ajaxplorer) ajaxplorer.actionBar.fireAction("logout");
+                if(ajaxplorer && !Prototype.Browser.Gecko) ajaxplorer.actionBar.fireAction("logout");
             }
             document.observe("dom:loaded", function(){
                 var cookieEnabled=(navigator.cookieEnabled)? true : false
@@ -118,7 +118,7 @@
                        cookieEnabled=(document.cookie.indexOf("testcookie")!=-1)? true : false;
                    }
                    if(!cookieEnabled){
-                       alert('AJXP_MESSAGE[share_center.76]');
+                       alert("AJXP_MESSAGE[share_center.76]");
                    }
             });
 		</script>

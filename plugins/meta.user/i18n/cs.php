@@ -18,23 +18,14 @@
  *
  * The latest code can be found at <http://www.ajaxplorer.info/>.
  */
-defined('AJXP_EXEC') or die( 'Access not allowed');
-require_once('../classes/class.AbstractTest.php');
-
-/**
- * Check server OS
- * @package AjaXplorer
- * @subpackage Tests
- */
-class PHPOS extends AbstractTest
-{
-    function PHPOS() { parent::AbstractTest("PHP operating system", "Current operating system ".PHP_OS); }
-    function doTest() 
-    { 
-    	$this->testedParams["Server OS"] = PHP_OS;
-        $this->failedLevel = "info";
-        return FALSE;
-    }
-};
-
+$mess=array(
+"1" => "Meta data",
+"2" => "Bez označení",
+"3" => "Remove Rating",
+"4" => "Nedůležité",
+"5" => "Úkoly",
+"6" => "Osobní",
+"7" => "Práce", 
+"8" => "Důležité"
+);
 ?>

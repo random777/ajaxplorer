@@ -181,15 +181,16 @@ textarea{
     opacity: 0.8;
     font-size: 11px;
     white-space: nowrap;
-    margin-top: -3px;
+    margin-top: 1px;
 }
 
 div.thumbnail_cell_metadata span.metadata_chunk span.text_label{
     margin-left: 0;
+    display:inline;
 }
 
 div.thumbnail_cell_metadata span.metadata_chunk{
-    display: inline-block;
+    display: inline;
     margin-right: 5px;
 }
 
@@ -723,9 +724,9 @@ div.oneFieldForm input.SF_input{
     z-index: 2002;
     left: 40%;
     position: absolute;
-    -webkit-box-shadow: 1px 1px 24px #aaa;
-    -moz-box-shadow: 1px 1px 24px #aaa;
-    box-shadow: 1px 1px 24px #aaa;
+    -webkit-box-shadow: 5px 5px 60px #222;
+    -moz-box-shadow:  5px 5px 60px #222;
+    box-shadow: 5px 5px 60px #222;
 }
 
 .pg_cancel_button{
@@ -906,6 +907,42 @@ input.SF_input.SF_number{
 .captcha_container img{
     margin: 5 0 0 2px;
     border: 1px solid #ddd;
+}
+
+#login_form{
+    margin: 0 53px;
+    font-size: 15px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#login_form div.SF_label{
+    display: none;
+}
+
+#login_form.no_placeholder div.SF_label{
+    display: block;
+    text-align: left;
+    padding: 0 4px;
+}
+
+#login_form.no_placeholder div.SF_input{
+    clear: left;
+}
+
+#login_form div.SF_input > input{
+    width: 200px !important;
+    padding: 4px !important;
+    font-size: 17px;
+}
+
+.ajxp_login_error {
+    margin-top: 10px;
+    font-size: 14px !important;
+    background-color: transparent !important;
+    color: rgb(219, 0, 0) !important;
+    border: 1px solid rgb(216, 0, 0);
+    padding: 7px !important;
 }
 
 /***************/
@@ -1992,8 +2029,14 @@ div#upload_files_list, div#multiple_download_container
     background-position: 10px 100%;
 }
 
-.dropareaHover {
-    border-color:#D96252 !important;
+.dropareaHover{
+    background-color: #c3d9ff !important;
+}
+
+#content_pane.dropareaHover {
+    border-color: #D96252 !important;
+    border-style: dashed;
+    background-color: white !important;
 }
 
 div#uploader_options_pane {
@@ -2036,6 +2079,13 @@ div#upload_files_list div, div#multiple_download_container div
     border-bottom: 1px solid rgb(227, 229, 233);
     color: #666;
 }
+
+div#upload_files_list span.item_relative_path{
+    color: #ccc;
+    margin-left: 15px;
+    font-size: 0.8em;
+}
+
 
 #upload_files_list img
 {
@@ -3749,6 +3799,7 @@ div.menuActions img{
     padding-top: 2px;
 }
 
+/*
 .backgroundPanel{
     position:absolute;
     right:0;
@@ -3758,12 +3809,28 @@ div.menuActions img{
     font-weight:bold;
     color: #fff;
     font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif , sans-serif;
-    background-color:#5E7C90;
+    background-color:#5599ff;
     filter:alpha(opacity=80);
     opacity: 0.8;
     -moz-opacity:0.8;
     z-index:10000;
-    border-radius: 7px 0 0 7px;
+    border-radius: 3px 0 0 3px;
+}*/
+
+.backgroundPanel {
+    position: absolute;
+    bottom: 0;
+    padding: 3px 7px 4px 7px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #fff;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif , sans-serif;
+    background-color: #59f;
+    z-index: 10000;
+    border-radius: 3px 3px 0 0;
+    width: 15%;
+    margin-left: 45%;
+    text-align: center;
 }
 
 /*******************************/
