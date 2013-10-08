@@ -95,17 +95,20 @@ abstract class AbstractAjxpUser
         }else{
             $hashes = explode(",", $hashes);
         }
-        $newHash =  md5($this->id.":".time());
+        $newHash = md5($this->id.":".AJXP_Utils::generateRandomString());
         array_push($hashes, $newHash);
         $this->setPref("cookie_hash", implode(",",$hashes));
         $this->save("user");
-		return $newHash; //md5($this->id.":".$newHash.":ajxp");
+		return $newHash;
 	}
 	
 	function getId(){
 		return $this->id;
 	}
 
+    function setId($id){
+        $this->id = $id ;
+    }
     /**
      * @return bool
      */
@@ -340,6 +343,7 @@ abstract class AbstractAjxpUser
 
     public function setGroupPath($groupPath, $update = false)
     {
+        if(strlen($groupPath) > 1) $groupPath = rtrim($groupPath, "/");
         $this->groupPath = $groupPath;
     }
 

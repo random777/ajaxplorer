@@ -38,18 +38,20 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
 	public function init($options){
 		parent::init($options);
 		set_include_path(get_include_path().PATH_SEPARATOR.AJXP_INSTALL_PATH."/plugins/index.lucene");
-        if(!empty($this->options["index_meta_fields"])){
-        	$this->metaFields = explode(",",$this->options["index_meta_fields"]);
+        $metaFields = $this->getFilteredOption("index_meta_fields");
+        $specKey = $this->getFilteredOption("repository_specific_keywords");
+        if(!empty($metaFields)){
+        	$this->metaFields = explode(",",$metaFields);
         }
-        if(!empty($this->options["repository_specific_keywords"])){
-            $this->specificId = "-".str_replace(array(",", "/"), array("-", "__"), AJXP_VarsFilter::filter($this->options["repository_specific_keywords"]));
+        if(!empty($specKey)){
+            $this->specificId = "-".str_replace(array(",", "/"), array("-", "__"), AJXP_VarsFilter::filter($specKey));
         }
-        $this->indexContent = ($this->options["index_content"] == true);
+        $this->indexContent = ($this->getFilteredOption("index_content") == true);
 	}
 
     public function initMeta($accessDriver){
         $this->accessDriver = $accessDriver;
-        if(!empty($this->options["index_meta_fields"]) || $this->indexContent){
+        if(!empty($this->metaFields) || $this->indexContent){
             $metaFields = $this->metaFields;
             $el = $this->xPath->query("/indexer")->item(0);
             if($this->indexContent){
@@ -65,7 +67,42 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
         parent::init($this->options);
     }
 
-	
+
+    protected function setDefaultAnalyzer(){
+
+        switch ($this->getFilteredOption("QUERY_ANALYSER")){
+            case "utf8num_insensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
+                break;
+            case "utf8num_sensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num());
+                break;
+            case "utf8_insensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8_CaseInsensitive());
+                break;
+            case "utf8_sensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8());
+                break;
+            case "textnum_insensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
+                break;
+            case "textnum_sensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_textNum());
+                break;
+            case "text_insensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Text_CaseInsensitive());
+                break;
+            case "text_sensitive":
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Text());
+                break;
+            default:
+                Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
+                break;
+        }
+        Zend_Search_Lucene_Search_Query_Wildcard::setMinPrefixLength(intval($this->getFilteredOption("WILDCARD_LIMITATION")));
+
+    }
+
 	public function applyAction($actionName, $httpVars, $fileVars){
         $messages = ConfService::getMessages();
 		if($actionName == "search"){
@@ -107,6 +144,7 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
 				$index->setDefaultSearchField("basename");
 				$query = $httpVars["query"];
 			}
+            $this->setDefaultAnalyzer();
             if($query == "*"){
                 $index->setDefaultSearchField("ajxp_node");
                 $query = "yes";
@@ -323,8 +361,7 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
         }else{
        		$index =  $this->loadIndex(ConfService::getRepository()->getId());
         }
-        Zend_Search_Lucene_Analysis_Analyzer::setDefault( new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive());
-
+        $this->setDefaultAnalyzer();
         if($oldNode != null && $copy == false){
             $oldDocId = $this->getIndexedDocumentId($index, $oldNode);
             if($oldDocId != null){
@@ -384,12 +421,12 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
      */
     public function createIndexedDocument($ajxpNode, &$index){
         $ajxpNode->loadNodeInfo();
-        $ext = pathinfo($ajxpNode->getLabel(), PATHINFO_EXTENSION);
+        $ext = strtolower(pathinfo($ajxpNode->getLabel(), PATHINFO_EXTENSION));
         $parseContent = $this->indexContent;
-        if($parseContent && $ajxpNode->bytesize > $this->pluginConf["PARSE_CONTENT_MAX_SIZE"]){
+        if($parseContent && $ajxpNode->bytesize > $this->getFilteredOption("PARSE_CONTENT_MAX_SIZE")){
             $parseContent = false;
         }
-        if($parseContent && in_array($ext, explode(",",$this->pluginConf["PARSE_CONTENT_HTML"]))){
+        if($parseContent && in_array($ext, explode(",",$this->getFilteredOption("PARSE_CONTENT_HTML")))){
             $doc = @Zend_Search_Lucene_Document_Html::loadHTMLFile($ajxpNode->getUrl());
         }elseif($parseContent && $ext == "docx" && class_exists("Zend_Search_Lucene_Document_Docx")){
         	$realFile = call_user_func(array($ajxpNode->wrapperClassName, "getRealFSReference"), $ajxpNode->getUrl());
@@ -440,10 +477,11 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
 
             $index->addDocument($privateDoc);
         }
-        if($parseContent && in_array($ext, explode(",",$this->pluginConf["PARSE_CONTENT_TXT"]))){
+        if($parseContent && in_array($ext, explode(",",$this->getFilteredOption("PARSE_CONTENT_TXT")))){
             $doc->addField(Zend_Search_Lucene_Field::unStored("body", file_get_contents($ajxpNode->getUrl())));
         }
-        if($parseContent && !empty($this->pluginConf["UNOCONV"]) && in_array($ext, array("doc", "odt", "xls", "ods"))){
+        $unoconv = $this->getFilteredOption("UNOCONV");
+        if($parseContent && !empty($unoconv) && in_array($ext, array("doc", "odt", "xls", "ods"))){
         	$targetExt = "txt";
         	$pipe = false;
         	if(in_array($ext, array("xls", "ods"))){
@@ -453,7 +491,7 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
         		$pipe = true;
         	}
         	$realFile = call_user_func(array($ajxpNode->wrapperClassName, "getRealFSReference"), $ajxpNode->getUrl());
-        	$unoconv = "HOME=".AJXP_Utils::getAjxpTmpDir()." ".$this->pluginConf["UNOCONV"]." --stdout -f $targetExt ".escapeshellarg($realFile);
+        	$unoconv = "HOME=".AJXP_Utils::getAjxpTmpDir()." ".$unoconv." --stdout -f $targetExt ".escapeshellarg($realFile);
         	if($pipe){
         		$newTarget = str_replace(".$ext", ".pdf", $realFile);
         		$unoconv.= " > $newTarget";
@@ -470,12 +508,13 @@ class AjxpLuceneIndexer extends AJXP_Plugin{
         		$ext = "pdf";
         	}
         }
-        if($parseContent && !empty($this->pluginConf["PDFTOTEXT"]) && in_array($ext, array("pdf"))){
+        $pdftotext = $this->getFilteredOption("PDFTOTEXT");
+        if($parseContent && !empty($pdftotext) && in_array($ext, array("pdf"))){
         	$realFile = call_user_func(array($ajxpNode->wrapperClassName, "getRealFSReference"), $ajxpNode->getUrl());
         	if($pipe && isset($newTarget) && is_file($newTarget)){
         		$realFile = $newTarget;
         	}
-        	$cmd = $this->pluginConf["PDFTOTEXT"]." ".escapeshellarg($realFile)." -";
+        	$cmd = $pdftotext." ".escapeshellarg($realFile)." -";
         	$output = array();
         	exec($cmd, $output, $return);
         	$out = implode("\n", $output);
