@@ -10,7 +10,7 @@
         <actions>
             <action name="scheduler_menu">
                 <gui text="action.scheduler.18" iconClass="icon-time" title="action.scheduler.18d" src="scheduler/ICON_SIZE/player_time.png" hasAccessKey="false">
-                    <context selection="false" dir="" recycle="hidden"
+                    <context selection="false" dir="" recycle="hidden" allowedMimes="scheduler_zone"
                              actionBar="true" contextMenu="false" infoPanel="false" actionBarGroup="put"/>
                 </gui>
                 <subMenu>
@@ -23,7 +23,7 @@
             </action>
             <action name="scheduler_generateCronExpression">
                 <gui text="action.scheduler.20" title="action.scheduler.20d" iconClass="icon-paste" src="scheduler/22/shellscript.png" hasAccessKey="false">
-                    <context selection="false" dir="" recycle="hidden"
+                    <context selection="false" dir="" recycle="hidden" allowedMimes="scheduler_zone"
                              actionBar="false" contextMenu="true" infoPanel="true"
                              actionBarGroup="user"/>
                 </gui>
@@ -48,12 +48,12 @@
                              <textarea class="dialogFocus" style="width:300px;height:80px; margin-top: 5px;" id="cron_expression"></textarea>
                          </div>
                     ]]></clientForm>
-                    <serverCallback methodName="switchAction"/>
+                    <serverCallback methodName="switchAction" developerComment="Generate a correct expression to be inserted in Crontab, in order to trigger the {runAll} action on a regular basis."/>
                 </processing>
             </action>
             <action name="scheduler_runAll">
                 <gui text="action.scheduler.15" title="action.scheduler.16d" iconClass="icon-play-circle" src="scheduler/22/media_playback_start.png" hasAccessKey="false">
-                    <context selection="false" dir="" recycle="hidden"
+                    <context selection="false" dir="" recycle="hidden" allowedMimes="scheduler_zone"
                              actionBar="false" contextMenu="true" infoPanel="true"
                              actionBarGroup="user"/>
                 </gui>
@@ -66,12 +66,12 @@
                         };
                         connexion.sendAsync();
                     ]]></clientCallback>
-                    <serverCallback methodName="switchAction"/>
+                    <serverCallback methodName="switchAction" developerComment="Run the scheduler: check if some tasks must be run now, and launch them. Generally launched from command line."/>
                 </processing>
             </action>
             <action name="scheduler_runTask">
                 <gui text="action.scheduler.16" title="action.scheduler.15d" iconClass="icon-play" src="scheduler/22/task_run.png" hasAccessKey="false">
-                    <context selection="true" dir="" recycle="hidden"
+                    <context selection="true" dir="" recycle="hidden" allowedMimes="scheduler_zone"
                              actionBar="true" contextMenu="true" infoPanel="true"
                              actionBarGroup="change"/>
                     <selectionContext dir="false" behaviour="hidden" file="true" recycle="false" unique="true" allowedMimes="scheduler_task"/>
@@ -90,17 +90,21 @@
                         };
                         connexion.sendAsync();
                     ]]></clientCallback>
-                    <serverCallback methodName="switchAction"/>
+                    <serverCallback methodName="switchAction" developerComment="Force running a specific task">
+                        <input_param description="The id of the task to run" name="task_id" type="string" mandatory="true"/>
+                    </serverCallback>
                     </processing>
             </action>
             <action name="scheduler_loadTask">
                 <processing>
-                    <serverCallback methodName="handleTasks"/>
+                    <serverCallback methodName="handleTasks" developerComment="Returns a JSON representation of the task parameters">
+                        <input_param description="The id of the task to run" name="task_id" type="string" mandatory="true"/>
+                    </serverCallback>
                 </processing>
             </action>
             <action name="scheduler_addTask">
                 <gui text="action.scheduler.8" title="action.scheduler.9" iconClass="icon-plus" src="scheduler/22/task_add.png" hasAccessKey="false">
-                    <context selection="false" dir="" recycle="hidden"
+                    <context selection="false" dir="" recycle="hidden" allowedMimes="scheduler_zone"
                              actionBar="false" contextMenu="true" infoPanel="true"
                              actionBarGroup="put">
                     </context>
@@ -171,12 +175,15 @@
                         <param name="param_name" group="Parameters" replicationGroup="group1" label="action.scheduler.6" description="action.scheduler.6d" type="string" mandatory="false"/>
                         <param name="param_value" group="Parameters" replicationGroup="group1" label="action.scheduler.7" description="action.scheduler.7d" type="string" mandatory="false"/>
                     </standardFormDefinition>
-                    <serverCallback methodName="handleTasks"/>
+                    <serverCallback methodName="handleTasks" developerComment="Create a new task by posting parameters">
+                        <input_param description="All parameters generated by the FormManager (label, schedule, user_id, repository_id, action_name, one or more param_name / param_value)" name="FORM_DATA"
+                                     type="FORM_DATA"/>
+                    </serverCallback>
                 </processing>
             </action>
             <action name="scheduler_editTask">
                 <gui text="action.scheduler.10" title="action.scheduler.11" iconClass="icon-edit" src="scheduler/ICON_SIZE/task.png" hasAccessKey="false">
-                    <context selection="true" dir="" recycle="hidden"
+                    <context selection="true" dir="" recycle="hidden" allowedMimes="scheduler_zone"
                              actionBar="true" contextMenu="true" infoPanel="true"
                              actionBarGroup="change"/>
                     <selectionContext dir="false" file="true" behaviour="hidden" recycle="false" unique="true" allowedMimes="scheduler_task"/>
@@ -190,7 +197,7 @@
             </action>
             <action name="scheduler_removeTask">
                 <gui text="action.scheduler.19" title="action.scheduler.12" iconClass="icon-trash" src="scheduler/22/task_delete.png" hasAccessKey="false">
-                    <context selection="true" dir="" recycle="hidden"
+                    <context selection="true" dir="" recycle="hidden" allowedMimes="scheduler_zone"
                              actionBar="true" contextMenu="true" infoPanel="true"
                              actionBarGroup="change"/>
                     <selectionContext dir="false" file="true" behaviour="hidden" recycle="false" unique="true" allowedMimes="scheduler_task"/>
@@ -206,12 +213,14 @@
                         conn.sendAsync();
 
                     ]]></clientCallback>
-                    <serverCallback methodName="handleTasks"/>
+                    <serverCallback methodName="handleTasks" developerComment="Remove a given task from scheduler">
+                        <input_param description="Id of the task to delete" name="task_id" type="string" mandatory="true"/>
+                    </serverCallback>
                 </processing>
             </action>
             <action name="scheduler_fakeLongTask">
                 <processing>
-                    <serverCallback methodName="fakeLongTask"/>
+                    <serverCallback methodName="fakeLongTask" developerComment="Launch a fake long task."/>
                 </processing>
             </action>
         </actions>

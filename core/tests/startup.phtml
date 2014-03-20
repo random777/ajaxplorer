@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>AjaXplorer</title>
+		<title>Pydio</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 		<link rel="icon" type="image/x-png" href="AJXP_THEME_FOLDER/images/html-folder.png">
@@ -16,8 +16,9 @@
                 background-image: url('plugins/gui.ajax/res/themes/vision/images/grid_t.png');
             }
             h1 {
-                font-size: 33px;
-                color: #BBB;
+                font-size: 30px;
+                font-weight: normal;
+                color: #555;
                 height: 20px;
                 text-align: center;
                 margin: 20px auto;
@@ -26,17 +27,12 @@
             div.mainContainer{
                 position: relative;
                 display: block;
-                -webkit-border-radius: 10px;
-                -moz-border-radius: 10px;
-                border-radius: 10px;
-                background-color: #EEF3F7;
-                -webkit-box-shadow: 1px 1px 64px rgba(0,0,0,0.25);
-                -moz-box-shadow: 1px 1px 64px rgba(0,0,0,0.25);
-                box-shadow: 1px 1px 64px rgba(0,0,0,0.25);
-                margin: 40px auto;
+                border-radius: 4px;
+                margin: 36px auto;
                 width: 500px;
                 height: 80%;
-                padding: 18px;
+                padding: 7px 11px;
+                color: #535353;
             }
 
             p.status{
@@ -45,10 +41,10 @@
                 line-height: 20px;
                 text-align: justify;
                 height: 60px;
+                padding: 0 5px;
             }
             p.status a{
-                font-weight: bold;
-                color: #666;
+                color: #535353;
             }
             p.status strong{
                 font-weight: normal;
@@ -61,11 +57,9 @@
                 margin: 0 auto;
                 height: 331px;
                 overflow-y: scroll;
-                border: 1px solid #DDD;
-                -moz-box-shadow: inset 1px 1px 9px #ddd;
-                -webkit-box-shadow: inset 1px 1px 9px #ddd;
-                box-shadow: inset 1px 1px 9px #ddd;
                 background-color: #ffffff;
+                border-radius: 3px;
+                box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5);
             }
 
             div.testLine {
@@ -121,17 +115,17 @@
 	</head>
 	<body bgcolor="#FFFFFF" text="#000000" marginheight="0" marginwidth="0" leftmargin="0" topmargin="0"  style="">
 
-        <h1>AjaXplorer Diagnostic Tool</h1>
+        <h1>Pydio Diagnostic Tool</h1>
 
         <div class="mainContainer">
             <?php
                 if ($showSkipLink) {
                     if (count($ALL_ROWS["warning"]) && !count($ALL_ROWS["error"])) {
-                        echo "<p class='status statusWarning'><strong>Status</strong> : You have some warnings, but no fatal error detected, AjaXplorer should run ok. <br/>Please review the warnings, and <a href='index.php?ignore_tests=true'>click here to continue to AjaXplorer</a>.</p>";
+                        echo "<p class='status statusWarning'><strong>Status</strong> : You have some warnings, but no fatal error detected, Pydio should run ok. <br/>Please review the warnings, and <a href='index.php?ignore_tests=true'>click here to continue to Pydio</a>.</p>";
                     } else if(count($ALL_ROWS["error"])) {
-                        echo "<p class='status statusError'><strong>Status</strong> : <b>You have some errors</b> that may prevent AjaXplorer from running. Please review the error lines to check what action you should do. If you want to skip this step, simply <a href='index.php?ignore_tests=true'>click here to continue to Ajaxplorer</a>.</p>";
+                        echo "<p class='status statusError'><strong>Status</strong> : <b>You have some errors</b> that may prevent Pydio from running. Please review the error lines to check what action you should do. If you want to skip this step, simply <a href='index.php?ignore_tests=true'>click here to continue to Pydio</a>.</p>";
                     }else{
-                        echo "<p class='status'><strong>Status</strong> : <b>No specific errors</b> were detected, your AjaXplorer installation should run smoothly! <br/><a href='index.php?ignore_tests=true'>Click there to continue to Ajaxplorer</a></p>";
+                        echo "<p class='status'><strong>Status</strong> : <b>No specific errors</b> were detected, your Pydio installation should run smoothly! <br/><a href='index.php?ignore_tests=true'>Click there to continue to Pydio</a></p>";
                     }
                 }
             ?>
@@ -185,7 +179,7 @@
                     }
                 });
                 var resize = function(){
-                    var h1 = document.viewport.getHeight() - 160 ;
+                    var h1 = document.viewport.getHeight() - 120 ;
                     var h = h1 - 80;
                     $$("div.mainContainer")[0].setStyle({height:h1+'px'});
                     $$("div.testList")[0].setStyle({height:h + 'px'});
@@ -195,6 +189,6 @@
             </script>
         </div>
 
-        <!-- <h1 style="text-align: right">Continue to AjaXplorer &gt;&gt; </h1>-->
+        <!-- <h1 style="text-align: right">Continue to Pydio &gt;&gt; </h1>-->
     </body>
 </html>

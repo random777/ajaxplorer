@@ -22,5 +22,10 @@ $mess=array(
 "Bit.ly account user name" => "Nome de Conta de Utilizador Bit.ly",
 "API Key" => "Chave API",
 "Bit.ly account API Key" => "Chave API da conta Bit.ly",
+"Shorten Download Links before sending them back to the user." => "Shorten Download Links before sending them back to the user.",
+"Shorten Download Links before sending them back to the user. Requires a Bit.ly account." => "Shorten Download Links before sending them back to the user. Requires a Bit.ly account.",
+"Yourls domain" => "Yourls domain",
+"Use IDN" => "Use IDN",
+"multi URL Shortener" => "multi URL Shortener",
+"Shorten type" => "Shorten type",
 );
-?>

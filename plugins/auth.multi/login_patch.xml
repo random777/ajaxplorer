@@ -7,7 +7,7 @@
 	if(loginRedirect){
 		document.location.href=loginRedirect;
 	}else{
-		modal.showDialogForm('Log In', ($('login_form')?'login_form':'login_form_dynamic'), 
+		modal.showDialogForm('Log In', ($('login_form')?'login_form':'login_form_dynamic'),
 		function(oForm){
             $("generic_dialog_box").setStyle({
                 top:$("progressBox").getStyle('top'),
@@ -56,6 +56,15 @@
                     oForm.setAttribute("autocomplete", "off");
                 }catch(e){}
             }
+            if(authConfs && authConfs.get("ENABLE_FORGOT_PASSWORD") && !oForm.down('a.forgot-password-link')){
+                try{
+                    oForm.down('input[name="password"]').up("div.SF_element").insert({after:'<div class="SF_element"><a href="#" class="forgot-password-link">AJXP_MESSAGE[479]</a></div>'});
+                    oForm.down('a.forgot-password-link').observe("click", function(e){
+                        Event.stop(e);
+                        ajaxplorer.actionBar.fireAction(authConfs.get("FORGOT_PASSWORD_ACTION"));
+                    });
+                }catch(e){ if(console) console.log(e); }
+            }
             modal.refreshDialogPosition();
 		},
 		function(){
@@ -98,7 +107,7 @@
 			connexion.sendAsync();
 			oForm.userid.value = '';
 			oForm.password.value = '';
-			return false;				
+			return false;
 		});
 	}
 ]]></clientCallback>

@@ -1,30 +1,30 @@
 <?php
 /*
- * Copyright 2007-2011 Charles du Jeu <contact (at) cdujeu.me>
- * This file is part of AjaXplorer.
+ * Copyright 2007-2013 Charles du Jeu - Abstrium SAS <team (at) pyd.io>
+ * This file is part of Pydio.
  *
- * AjaXplorer is free software: you can redistribute it and/or modify
+ * Pydio is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AjaXplorer is distributed in the hope that it will be useful,
+ * Pydio is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with AjaXplorer.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Pydio.  If not, see <http://www.gnu.org/licenses/>.
  *
- * The latest code can be found at <http://www.ajaxplorer.info/>.
+ * The latest code can be found at <http://pyd.io/>.
  */
 namespace AJXP\Tests\Core;
 
 class StoragesTest extends \PHPUnit_Framework_TestCase
 {
 
-    public function testRolesStorage(){
-
+    public function testRolesStorage()
+    {
         $r = new \AJXP_Role("phpunit_temporary_role");
         $r->setAcl(0, "rw");
         \AuthService::updateRole($r);
@@ -36,35 +36,43 @@ class StoragesTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($r2);
     }
 
-    public function testPluginsActivation(){
+    public function testPluginsActivation()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 
-    public function testPluginsConfigs(){
+    public function testPluginsConfigs()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 
-    public function testRepositoriesStorage(){
+    public function testRepositoriesStorage()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 
-    public function testCacheItem(){
+    public function testCacheItem()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 
-    public function testBinariesStorage(){
+    public function testBinariesStorage()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 
-    public function testQueuesStorage(){
+    public function testQueuesStorage()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 
-    public function testI18NMessages(){
+    public function testI18NMessages()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 
-    public function testRegisteredExtensions(){
+    public function testRegisteredExtensions()
+    {
         $this->markTestIncomplete('Not implemented');
     }
 

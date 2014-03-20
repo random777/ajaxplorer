@@ -1,35 +1,35 @@
 /*
- * Copyright 2007-2011 Charles du Jeu <contact (at) cdujeu.me>
- * This file is part of AjaXplorer.
+ * Copyright 2007-2013 Charles du Jeu - Abstrium SAS <team (at) pyd.io>
+ * This file is part of Pydio.
  *
- * AjaXplorer is free software: you can redistribute it and/or modify
+ * Pydio is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * AjaXplorer is distributed in the hope that it will be useful,
+ * Pydio is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with AjaXplorer.  If not, see <http://www.gnu.org/licenses/>.
+ * along with Pydio.  If not, see <http://www.gnu.org/licenses/>.
  *
- * The latest code can be found at <http://www.ajaxplorer.info/>.
+ * The latest code can be found at <http://pyd.io/>.
  */
 Class.create("IMagickPreviewer", Diaporama, {
 
 	fullscreenMode: false,
 	src_file: "",
 
-	initialize: function($super, oFormObject)
+	initialize: function($super, oFormObject, editorOptions)
 	{
-        var options = {
+        var options = Object.extend({
             floatingToolbar:true,
             replaceScroller:false,
             toolbarStyle: "icons_only diaporama_toolbar",
             actions : {}
-        };
+        }, editorOptions);
 		$super(oFormObject, options);
 		this.baseUrl = ajxpBootstrap.parameters.get('ajxpServerAccess')+"&get_action=get_extracted_page&file=";
 		// Override onload for the text
@@ -37,7 +37,6 @@ Class.create("IMagickPreviewer", Diaporama, {
 			this.jsImageLoading = false;
 			this.imgTag.src = this.jsImage.src;
 			this.resizeImage(true);
-			this.downloadButton.removeClassName("disabled");
 			var i = 0;
 			for(i=0;i<this.items.length;i++){
 				if(this.items[i] == this.currentFile){
@@ -54,13 +53,6 @@ Class.create("IMagickPreviewer", Diaporama, {
 	open : function($super, node)
 	{
 		this.src_file = node.getPath();
-        if(window.ajaxplorer.actionBar.getActionByName("download")){
-            this.downloadButton.onclick = function(){
-                if(!this.currentFile) return;
-                ajaxplorer.triggerDownload(ajxpBootstrap.parameters.get('ajxpServerAccess')+'&action=download&file='+this.src_file);
-                return false;
-            }.bind(this);
-        }
 		this.currentIM = getBaseName(this.src_file);
 		// Extract the pages and load result!
 		var connexion = new Connexion();
@@ -196,7 +188,6 @@ Class.create("IMagickPreviewer", Diaporama, {
 		if(this.crtWidth){
 			this.crtRatio = this.crtHeight / this.crtWidth;
 		}
-		this.downloadButton.addClassName("disabled");
 		new Effect.Opacity(this.imgTag, {afterFinish : function(){
 			this.jsImageLoading = true;
 			this.jsImage.src  = this.baseUrl + encodeURIComponent(this.currentFile) + "&src_file=" + this.src_file;
